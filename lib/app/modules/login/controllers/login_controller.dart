@@ -65,4 +65,10 @@ class LoginController extends GetxController{
       }
     };
   }
+
+  VoidCallback back(){
+    return () {
+      Get.back();
+    };
+  }
 }

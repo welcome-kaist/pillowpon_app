@@ -6,6 +6,7 @@ import 'package:myapp/app/cores/widgets/appbar.dart';
 import 'package:myapp/app/routes/app_asset_name.dart';
 
 import '../../../cores/values/app_colors.dart';
+import '../../../cores/widgets/text.dart';
 import '../controllers/login_controller.dart';
 
 class LoginView extends BaseView<LoginController> {
@@ -16,8 +17,9 @@ class LoginView extends BaseView<LoginController> {
   @override
   PreferredSizeWidget? appBar(BuildContext context) {
     return AppBar(
-      leading:
-          IconButton(onPressed: () {}, icon: const Icon(Icons.keyboard_backspace)),
+      leading: IconButton(
+          onPressed: controller.back(),
+          icon: const Icon(Icons.keyboard_backspace)),
     );
   }
 
@@ -34,12 +36,8 @@ class LoginView extends BaseView<LoginController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                "Welcome to",
-                style: GoogleFonts.comfortaa(
-                  fontSize: 24,
-                  fontWeight: FontWeight.normal,
-                ),
+              PillowponText.comfortaa24Normal(
+                text: "Welcome to",
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 5),
@@ -54,11 +52,8 @@ class LoginView extends BaseView<LoginController> {
           const SizedBox(
             height: 10,
           ),
-          Text(
-            "Please login to use",
-            style: GoogleFonts.comfortaa(
-                fontSize: 20, fontWeight: FontWeight.normal),
-          ),
+          PillowponText.comfortaa20Normal(
+              text: "Please login to use", color: AppColors.primaryBlack),
           loginForm(),
           const SizedBox(
             height: 8.0,
@@ -160,13 +155,8 @@ class LoginView extends BaseView<LoginController> {
               side: const BorderSide(color: AppColors.primaryNormal),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5))),
-          child: const Text(
-            "LOG IN",
-            style: TextStyle(
-                color: AppColors.primaryWhite,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-          )),
+          child: PillowponText.mob14w700(
+              text: "LOG IN", color: AppColors.primaryWhite)),
     );
   }
 }

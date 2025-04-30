@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:myapp/app/cores/bases/base_view.dart';
 import 'package:myapp/app/cores/widgets/appbar.dart';
+import 'package:myapp/app/cores/widgets/text.dart';
 import 'package:myapp/app/routes/app_asset_name.dart';
 
 import '../../../cores/values/app_colors.dart';
@@ -40,40 +41,32 @@ class LogoutView extends BaseView<LogoutController> {
                   onPressed: controller.goLogin(),
                   style: OutlinedButton.styleFrom(
                       backgroundColor: AppColors.primaryWhite,
-                      side:
-                          const BorderSide(width: 2, color: AppColors.primaryNormal),
+                      side: const BorderSide(
+                          width: 2, color: AppColors.primaryNormal),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6))),
-                  child: const Text(
-                    "LOG IN",
-                    style: TextStyle(
-                        color: AppColors.primaryNormal,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15),
-                  )),
+                  child: PillowponText.mob14w700(
+                      text: "LOG IN", color: AppColors.primaryNormal)),
             ),
             SizedBox(
-              width: 167,
-              height: 52,
-              child: FilledButton(
+                width: 167,
+                height: 52,
+                child: FilledButton(
                   onPressed: () {},
                   style: FilledButton.styleFrom(
                       backgroundColor: AppColors.primaryNormal,
-                      side:
-                          const BorderSide(width: 2, color: AppColors.primaryNormal),
+                      side: const BorderSide(
+                          width: 2, color: AppColors.primaryNormal),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6))),
-                  child: const Text(
-                    "REGISTER",
-                    style: TextStyle(
-                        color: AppColors.primaryWhite,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15),
-                  )),
-            )
+                  child: PillowponText.mob14w700(
+                      text: "REGISTER", color: AppColors.primaryWhite),
+                ))
           ],
         ),
-        const SizedBox(height: 40,)
+        const SizedBox(
+          height: 40,
+        )
       ],
     );
   }

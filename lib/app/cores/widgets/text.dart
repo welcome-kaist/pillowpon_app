@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../values/app_colors.dart';
 
-class PillowponText{
+class PillowponText {
   static Text mob24Bold({
     required String text,
     Color? color,
@@ -11,7 +12,7 @@ class PillowponText{
       style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: color ?? AppColors.primaryWhite),
+          color: color ?? AppColors.primaryBlack),
     );
   }
 
@@ -24,7 +25,7 @@ class PillowponText{
       style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w500,
-          color: color ?? AppColors.primaryWhite),
+          color: color ?? AppColors.primaryBlack),
     );
   }
 
@@ -37,7 +38,20 @@ class PillowponText{
       style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: color ?? AppColors.primaryWhite),
+          color: color ?? AppColors.primaryBlack),
+    );
+  }
+
+  static Text mob14w700({
+    required String text,
+    Color? color,
+  }) {
+    return Text(
+      text,
+      style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: color ?? AppColors.primaryBlack),
     );
   }
 
@@ -50,7 +64,7 @@ class PillowponText{
       style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: color ?? AppColors.primaryWhite),
+          color: color ?? AppColors.primaryBlack),
     );
   }
 
@@ -63,7 +77,7 @@ class PillowponText{
       style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: color ?? AppColors.primaryWhite),
+          color: color ?? AppColors.primaryBlack),
     );
   }
 
@@ -76,8 +90,33 @@ class PillowponText{
       style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: color ?? AppColors.primaryWhite),
+          color: color ?? AppColors.primaryBlack),
     );
   }
 
+  static Text comfortaa20Normal({
+    required String text,
+    Color? color,
+  }) {
+    return Text(
+      text,
+      style: GoogleFonts.comfortaa(
+          fontSize: 20,
+          fontWeight: FontWeight.normal,
+          color: color ?? AppColors.primaryBlack),
+    );
+  }
+
+  static Text comfortaa24Normal({
+    required String text,
+    Color? color,
+  }) {
+    return Text(
+      text,
+      style: GoogleFonts.comfortaa(
+          fontSize: 24,
+          fontWeight: FontWeight.normal,
+          color: color ?? AppColors.primaryBlack),
+    );
+  }
 }
