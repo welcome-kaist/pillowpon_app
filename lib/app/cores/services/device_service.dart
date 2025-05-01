@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
 import 'package:myapp/app/cores/models/pillowpon_metadata.dart';
 
 abstract class DeviceService extends GetxService {
-  Pillowpon get connected_device;
+  List<Pillowpon> get deviceList;
 
-  void loadDeviceList();
-  void connectDevice(Pillowpon target);
+  Pillowpon? get connected_device;
+
+  StreamSubscription<List<Pillowpon>> loadDeviceList();
+
+  Future<Pillowpon> connectDevice(Pillowpon target);
+
   Stream<PillowponMetadata> metadataStream();
 }
