@@ -13,5 +13,5 @@ abstract class DeviceService extends GetxService {
 
   Future<bool> connectDevice(Pillowpon target);
 
-  Stream<PillowponMetadata> metadataStream();
+  StreamSubscription<PillowponMetadata> metadataStream();
 }

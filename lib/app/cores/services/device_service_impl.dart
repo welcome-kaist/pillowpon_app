@@ -19,6 +19,7 @@ class DeviceServiceImpl extends DeviceService {
 
   final Rx<Pillowpon?> _rxConnectedDevice = Rx<Pillowpon?>(null);
 
+
   @override
   Pillowpon? get connected_device => _rxConnectedDevice.value;
 
@@ -51,8 +52,9 @@ class DeviceServiceImpl extends DeviceService {
   }
 
   @override
-  Stream<PillowponMetadata> metadataStream() {
-    // TODO: implement metadataStream
-    throw UnimplementedError();
+  StreamSubscription<PillowponMetadata> metadataStream() {
+    return _source.metadataStream().listen((metadata) {
+
+    });
   }
 }
