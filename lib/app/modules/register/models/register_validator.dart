@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
 
-class LoginValidator {
+class RegisterValidator {
+  bool isNameValid = false;
   bool isEmailValid = false;
   bool isPasswordValid = false;
 
-  FormFieldValidator emailValidator(){
+  FormFieldValidator nameValidator() {
     return (value) {
-      if (value!.isEmpty ||
-          !value.contains('@')) {
+      if (value!.isEmpty || value.length < 4) {
+        isNameValid = false;
+        return 'Please enter at least 4 characters';
+      }
+      return null;
+    };
+  }
+
+  FormFieldValidator emailValidator() {
+    return (value) {
+      if (value!.isEmpty || !value.contains('@')) {
         return 'Please enter a valid email address.';
       }
       return null;
     };
   }
 
-  FormFieldValidator passwordValidator(){
+  FormFieldValidator passwordValidator() {
     return (value) {
       if (value!.isEmpty || value.length < 6) {
         return 'Password must be at least 7 characters long.';

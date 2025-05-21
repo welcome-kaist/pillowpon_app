@@ -3,8 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:myapp/app/cores/bases/base_view.dart';
 import 'package:myapp/app/cores/widgets/appbar.dart';
 import 'package:myapp/app/cores/widgets/text.dart';
-import 'package:myapp/app/routes/app_asset_name.dart';
+import 'package:myapp/app/routes/app_asset_path.dart';
 
+import '../../../cores/utils/throttler.dart';
 import '../../../cores/values/app_colors.dart';
 import '../controllers/logout_controller.dart';
 
@@ -38,7 +39,7 @@ class LogoutView extends BaseView<LogoutController> {
               width: 167,
               height: 52,
               child: OutlinedButton(
-                  onPressed: controller.goLogin(),
+                  onPressed: Throttler.to.run(action: controller.goLogin()),
                   style: OutlinedButton.styleFrom(
                       backgroundColor: AppColors.primaryWhite,
                       side: const BorderSide(
@@ -52,7 +53,7 @@ class LogoutView extends BaseView<LogoutController> {
                 width: 167,
                 height: 52,
                 child: FilledButton(
-                  onPressed: () {},
+                  onPressed: Throttler.to.run(action: controller.goRegister()),
                   style: FilledButton.styleFrom(
                       backgroundColor: AppColors.primaryNormal,
                       side: const BorderSide(

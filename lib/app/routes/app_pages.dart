@@ -6,6 +6,8 @@ import '../modules/logout/bindings/logout_bindings.dart';
 import '../modules/logout/views/logout_view.dart';
 import '../modules/main/bindings/main_bindings.dart';
 import '../modules/main/views/main_view.dart';
+import '../modules/register/bindings/register_bindings.dart';
+import '../modules/register/views/register_view.dart';
 
 part 'app_routes.dart';
 
@@ -27,6 +29,11 @@ class AppPages {
       name: Routes.LOGIN,
       page: () => LoginView(),
       binding: LoginBindings(),
-    )
+    ),
+    GetPage(
+      name: Routes.REGISTER,
+      page: () => RegisterView(),
+      binding: RegisterBindings(),
+    ),
   ];
 }

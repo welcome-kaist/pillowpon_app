@@ -9,12 +9,11 @@ class SupabaseDataService extends DataService{
     // TODO: implement sleepScoreUpdateStream
     throw UnimplementedError();
   }
+  void subscribeSleepScore(){}
 
   @override
-  void uploadMetadata(User owner, PillowponMetadata metadata) {
+  void uploadMetadata(User owner, String metadata) {
     // TODO: implement uploadMetadata
   }
-
-  void subscribeSleepScore(){}
 
 }

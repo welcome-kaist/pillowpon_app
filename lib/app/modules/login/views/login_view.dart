@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/app/cores/bases/base_view.dart';
 import 'package:myapp/app/cores/widgets/appbar.dart';
-import 'package:myapp/app/routes/app_asset_name.dart';
+import 'package:myapp/app/routes/app_asset_path.dart';
 
+import '../../../cores/utils/throttler.dart';
 import '../../../cores/values/app_colors.dart';
 import '../../../cores/widgets/text.dart';
 import '../controllers/login_controller.dart';
@@ -146,17 +148,31 @@ class LoginView extends BaseView<LoginController> {
   }
 
   Widget confirmButton() {
-    return SizedBox(
-      width: double.maxFinite,
-      child: FilledButton(
-          onPressed: () {},
-          style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primaryNormal,
-              side: const BorderSide(color: AppColors.primaryNormal),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5))),
-          child: PillowponText.mob14w700(
-              text: "LOG IN", color: AppColors.primaryWhite)),
-    );
+    return Obx(() {
+      return SizedBox(
+        width: double.maxFinite,
+        child: controller.isLoading
+            ? FilledButton(
+                onPressed: () {},
+                style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primaryNormal,
+                    side: const BorderSide(color: AppColors.primaryNormal),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5))),
+                child: const CircularProgressIndicator(
+                  color: AppColors.primaryWhite,
+                  strokeWidth: 2.5,
+                ))
+            : FilledButton(
+                onPressed: Throttler.to.run(action: controller.login(formKey)),
+                style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primaryNormal,
+                    side: const BorderSide(color: AppColors.primaryNormal),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5))),
+                child: PillowponText.mob14w700(
+                    text: "LOG IN", color: AppColors.primaryWhite)),
+      );
+    });
   }
 }

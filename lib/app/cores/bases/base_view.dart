@@ -10,8 +10,10 @@ abstract class BaseView<Controller extends GetxController>
 
   Widget body(BuildContext context);
   PreferredSizeWidget? appBar(BuildContext context);
-  Widget? bottomNavigationBar(BuildContext context);
+  Widget? bottomNavigationBar(BuildContext context) => null;
   bool? extendBodyBehindAppBar;
+  Widget? drawer(BuildContext context) => null;
+  Widget? endDrawer(BuildContext context) => null;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +22,8 @@ abstract class BaseView<Controller extends GetxController>
       appBar: appBar(context),
       body: body(context),
       bottomNavigationBar: bottomNavigationBar(context),
+      drawer: drawer(context),
+      endDrawer: endDrawer(context),
     );
   }
 }

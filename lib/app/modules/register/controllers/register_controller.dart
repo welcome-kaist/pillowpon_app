@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myapp/app/modules/login/models/login_validator.dart';
-
 import '../../../cores/services/auth_service.dart';
 import '../../../cores/utils/error_snackbar.dart';
 import '../../../routes/app_pages.dart';
+import '../models/register_validator.dart';
 
-class LoginController extends GetxController{
-  final LoginValidator validator = LoginValidator();
+class RegisterController extends GetxController {
+  final RegisterValidator validator = RegisterValidator();
 
   final RxString _rxUserName = RxString("");
 
@@ -21,9 +20,9 @@ class LoginController extends GetxController{
 
   String get userPassword => _rxUserPassword.value;
 
-  final RxBool _rxIsLoginValid = RxBool(true);
+  final RxBool _rxIsRegisterValid = RxBool(true);
 
-  bool get isLoginValid => _rxIsLoginValid.value;
+  bool get isRegisterValid => _rxIsRegisterValid.value;
 
   final RxBool _rxIsLoading = RxBool(false);
 
@@ -43,30 +42,30 @@ class LoginController extends GetxController{
     _rxUserPassword.value = value;
   }
 
-  VoidCallback login(GlobalKey<FormState> formKey) {
+  VoidCallback register(GlobalKey<FormState> formKey) {
     return () async {
-      _rxIsLoginValid(validator.tryValidation(formKey));
-      if (!_rxIsLoginValid.value) {
+      _rxIsLoading(true);
+      _rxIsRegisterValid(validator.tryValidation(formKey));
+      if (!_rxIsRegisterValid.value) {
         _rxIsLoading(false);
         return;
       }
       try {
-        final user = await authService.login(
-          email: userEmail,
-          password: userPassword,
-        );
-        if (user != null) {
+        final token = await authService.register(
+            name: userName, email: userEmail, password: userPassword);
+        final newUser = authService.user;
+        if (newUser != null) {
           _rxIsLoading(false);
           Get.offAndToNamed(Routes.MAIN);
         }
       } catch (e) {
-        ErrorSnackbar.show(e.toString());
         _rxIsLoading(false);
+        ErrorSnackbar.show(e.toString());
       }
     };
   }
 
-  VoidCallback back(){
+  VoidCallback back() {
     return () {
       Get.back();
     };

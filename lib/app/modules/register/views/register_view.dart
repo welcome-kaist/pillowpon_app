@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 import 'package:myapp/app/cores/bases/base_view.dart';
-import 'package:myapp/app/cores/widgets/appbar.dart';
-import 'package:myapp/app/routes/app_asset_name.dart';
+import 'package:myapp/app/routes/app_asset_path.dart';
 
 import '../../../cores/utils/throttler.dart';
 import '../../../cores/values/app_colors.dart';
 import '../../../cores/widgets/text.dart';
 import '../controllers/register_controller.dart';
 
-class LoginView extends BaseView<LoginController> {
-  LoginView({super.key});
+class RegisterView extends BaseView<RegisterController> {
+  RegisterView({super.key});
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -54,7 +52,7 @@ class LoginView extends BaseView<LoginController> {
             height: 10,
           ),
           PillowponText.comfortaa20Normal(
-              text: "Please login to use", color: AppColors.primaryBlack),
+              text: "Please sign up to use", color: AppColors.primaryBlack),
           loginForm(),
           const SizedBox(
             height: 8.0,
@@ -77,6 +75,39 @@ class LoginView extends BaseView<LoginController> {
         key: formKey,
         child: Column(
           children: [
+            TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              key: const ValueKey(0),
+              validator: controller.validator.nameValidator(),
+              onSaved: (value) {
+                controller.userName = value!;
+              },
+              onChanged: (value) => controller.userName = value,
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.person,
+                    color: AppColors.primaryNormal,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryNormal),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryNormal),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  hintText: 'name',
+                  hintStyle:
+                      TextStyle(fontSize: 14, color: AppColors.primaryNormal),
+                  contentPadding: EdgeInsets.all(10)),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               key: const ValueKey(1),
@@ -147,17 +178,32 @@ class LoginView extends BaseView<LoginController> {
   }
 
   Widget confirmButton() {
-    return SizedBox(
-      width: double.maxFinite,
-      child: FilledButton(
-          onPressed: Throttler.to.run(action: controller.login(formKey)),
-          style: FilledButton.styleFrom(
-              backgroundColor: AppColors.primaryNormal,
-              side: const BorderSide(color: AppColors.primaryNormal),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5))),
-          child: PillowponText.mob14w700(
-              text: "LOG IN", color: AppColors.primaryWhite)),
-    );
+    return Obx(() {
+      return SizedBox(
+        width: double.maxFinite,
+        child: controller.isLoading
+            ? FilledButton(
+                onPressed: () {},
+                style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primaryNormal,
+                    side: const BorderSide(color: AppColors.primaryNormal),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5))),
+                child: const CircularProgressIndicator(
+                  color: AppColors.primaryWhite,
+                  strokeWidth: 2.5,
+                ))
+            : FilledButton(
+                onPressed:
+                    Throttler.to.run(action: controller.register(formKey)),
+                style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primaryNormal,
+                    side: const BorderSide(color: AppColors.primaryNormal),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5))),
+                child: PillowponText.mob14w700(
+                    text: "REGISTER", color: AppColors.primaryWhite)),
+      );
+    });
   }
 }

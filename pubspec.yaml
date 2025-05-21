@@ -38,6 +38,12 @@ dependencies:
   get: ^4.6.6
   flutter_svg: ^2.1.0
   google_fonts: ^6.2.1
+  jumping_dot: ^0.0.7
+  flutter_blue_plus: ^1.35.5
+  logger: ^2.5.0
+  flutter_animated_button: ^2.0.4
+  fluttertoast: ^8.2.12
+  fl_chart: ^0.71.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +72,8 @@ flutter:
     - assets/logo/logo.png
     - assets/logo/logoX2.png
     - assets/logo/logo.svg
+    - assets/icon/pillowicon.png
+    - assets/icon/check.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

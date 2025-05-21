@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 
-import '../controllers/login_controller.dart';
+import '../controllers/register_controller.dart';
 
-class LoginBindings extends Bindings {
+class RegisterBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put<LoginController>(LoginController());
+    Get.put<RegisterController>(RegisterController());
   }
 }

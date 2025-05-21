@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:myapp/app/modules/login/models/login_validator.dart';
 
 import '../../../cores/services/auth_service.dart';
-import '../../../cores/widgets/error_widget.dart';
+import '../../../cores/utils/error_snackbar.dart';
 import '../../../routes/app_pages.dart';
 
 class LoginController extends GetxController{
@@ -51,10 +51,11 @@ class LoginController extends GetxController{
         return;
       }
       try {
-        final user = await authService.login(
+       final token = await authService.login(
           email: userEmail,
           password: userPassword,
         );
+        final user = authService.user;
         if (user != null) {
           _rxIsLoading(false);
           Get.offAndToNamed(Routes.MAIN);
