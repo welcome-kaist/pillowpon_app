@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:myapp/app/datas/local/device_dummy.dart';
+import 'package:myapp/app/datas/remote/device_data_source_impl.dart';
 import 'package:myapp/app/datas/source/device_data_source.dart';
 
 import '../datas/local/auth_dummy.dart';
@@ -14,7 +15,7 @@ class LocalSourceBindings implements Bindings {
       permanent: true,
     );
     Get.put<DeviceDataSource>(
-      DeviceDummy(),
+      DeviceDataSourceImpl(),
       tag: (DeviceDataSource).toString(),
       permanent: true,
     );

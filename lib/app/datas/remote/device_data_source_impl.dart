@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -10,32 +13,102 @@ import 'package:myapp/app/cores/models/pillowpon_metadata.dart';
 import '../source/device_data_source.dart';
 
 class DeviceDataSourceImpl extends DeviceDataSource {
+  BluetoothAdapterState get _adapterState => _rxAdapterState.value;
+  final Rx<BluetoothAdapterState> _rxAdapterState =
+      BluetoothAdapterState.unknown.obs;
+
+  late StreamSubscription<BluetoothAdapterState> _adapterStateStateSubscription;
+  late StreamSubscription<List<ScanResult>> _scanResultsSubscription;
+  late StreamSubscription<bool> _isScanningSubscription;
+  late StreamSubscription<BluetoothConnectionState>
+      _connectionStateSubscription;
+  late StreamSubscription<bool> _isConnectingSubscription;
+  late StreamSubscription<bool> _isDisconnectingSubscription;
+  late StreamSubscription<int> _mtuSubscription;
+
+  final RxBool _rxIsScanning = RxBool(false);
+
+  bool get _isScanning => _rxIsScanning.value;
+
+  final RxList<ScanResult> _rxScanResults = RxList.empty();
+
+  List<ScanResult> get _scanResults => _rxScanResults.value;
+
+  final Rx<BluetoothConnectionState> _rxConnectionState =
+      BluetoothConnectionState.disconnected.obs;
+
+  BluetoothConnectionState get _connectionState => _rxConnectionState.value;
+
   List<BluetoothDevice> _systemDevices = [];
-  List<ScanResult> _scanResults = [];
+  BluetoothDevice? _connectedDevice;
+
+  final RxList<BluetoothService> _rxServices = RxList.empty();
+
+  List<BluetoothService> get services => _rxServices.value;
+
+  final Rx<int?> _rxRssi = Rx<int?>(null);
+
+  int? get _rssi => _rxRssi.value;
+
+  final Rx<int?> _rxMtuSize = Rx<int?>(null);
+
+  int? get _mtuSize => _rxMtuSize.value;
+
+  final Rx<BluetoothCharacteristic?> _rxCharacteristic =
+      Rx<BluetoothCharacteristic?>(null);
+
+  BluetoothCharacteristic? get characteristic => _rxCharacteristic.value;
 
   Logger log = Get.find<Logger>();
 
   @override
-  Future<bool> connectDevice(String deviceId) {
+  void onInit() {
+    _adapterStateStateSubscription =
+        FlutterBluePlus.adapterState.listen((state) {
+      _rxAdapterState(state);
+    });
+
+    _scanResultsSubscription = FlutterBluePlus.scanResults.listen((results) {
+      _rxScanResults(results);
+    }, onError: (e) {
+      log.e(
+        "Scan Error:$e",
+      );
+    });
+
+    _isScanningSubscription = FlutterBluePlus.isScanning.listen((state) {
+      _rxIsScanning(state);
+    });
+  }
+
+  @override
+  void onClose() {
+    _adapterStateStateSubscription.cancel();
+    _scanResultsSubscription.cancel();
+    _isScanningSubscription.cancel();
+  }
+
+  @override
+  Future<bool> connectDevice(String deviceId) async {
     bool isConnected = false;
     for (var result in _scanResults) {
       if (result.device.remoteId.toString() == deviceId) {
-          result.device.connect().then((_) {
-          isConnected = true;
-          log.i("Connected to $deviceId");
-        }).catchError((error) {
-          log.e("Failed to connect to $deviceId: $error");
+        return connect(result.device).then((_) {
+          initiateConnectState(result.device);
+          return true;
+        }).catchError((e) {
+          log.e("Connect Error: $e");
+          return false;
         });
       }
     }
-    return Future.value(isConnected);
+    return false;
   }
 
   @override
   Stream<List<Pillowpon>> loadDeviceList() {
     scan();
     return FlutterBluePlus.scanResults.map((results) {
-      _scanResults = results;
       return results
           .map((result) => Pillowpon(
                 id: result.device.remoteId.toString(),
@@ -74,7 +147,81 @@ class DeviceDataSourceImpl extends DeviceDataSource {
 
   @override
   Stream<PillowponMetadata> metadataStream() {
-    // TODO: implement metadataStream
-    throw UnimplementedError();
+    return characteristic!.lastValueStream.map((value) {
+      return PillowponMetadata.fromJson(jsonDecode(utf8.decode(value)));
+    });
+  }
+
+  Future<void> connect(BluetoothDevice device) async {
+    device.connect(autoConnect: true).then((_) {
+      log.i("Connected to ${device.name}");
+      _connectedDevice = device;
+      mtu(device);
+      saveDeviceId(device.remoteId.toString());
+    }).catchError((error) {
+      log.e("Failed to connect to ${device.name}: $error");
+    });
+  }
+
+  void saveDeviceId(String deviceId) async {
+    final file = File('/remoteId.txt');
+    await file.writeAsString(deviceId);
+  }
+
+  void autoConnect() async {
+    final String remoteId = await File('/remoteId.txt').readAsString();
+    var device = BluetoothDevice.fromId(remoteId);
+
+    connect(device);
+
+    await device.connectionState
+        .where((val) => val == BluetoothConnectionState.connected)
+        .first;
+  }
+
+  void mtu(BluetoothDevice device) async {
+    final subscription = device.mtu.listen((int mtu) {
+      // iOS: initial value is always 23, but iOS will quickly negotiate a higher value
+      print("mtu $mtu");
+    });
+
+// cleanup: cancel subscription when disconnected
+    device.cancelWhenDisconnected(subscription);
+
+// You can also manually change the mtu yourself.
+    if (!kIsWeb && Platform.isAndroid) {
+      await device.requestMtu(512);
+    }
+  }
+
+  void read(BluetoothService service) async {
+    var characteristics = service.characteristics;
+    //TODO : do for all characteristics
+    var c = characteristics.first;
+    if (c.properties.read) {
+      List<int> value = await c.read();
+      print(value);
+    }
+  }
+
+  void initiateConnectState(BluetoothDevice device) {
+    _connectionStateSubscription = device.connectionState.listen((state) async {
+      _rxConnectionState(state);
+      if (state == BluetoothConnectionState.connected) {
+        discoveryServices(device);
+        read(services.first);
+      }
+      if (state == BluetoothConnectionState.connected && _rssi == null) {
+        _rxRssi(await device.readRssi());
+      }
+    });
+
+    _mtuSubscription = device.mtu.listen((value) {
+      _rxMtuSize(value);
+    });
+  }
+
+  void discoveryServices(BluetoothDevice device) async {
+    _rxServices(await device.discoverServices());
   }
 }
