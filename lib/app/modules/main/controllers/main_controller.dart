@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
+import 'package:myapp/app/cores/services/data_service.dart';
 import 'package:myapp/app/cores/utils/error_dialog.dart';
 import 'package:myapp/app/modules/main/widgets/setting.dart';
 
+import '../../../cores/services/auth_service.dart';
 import '../../../cores/services/device_service.dart';
 import '../widgets/device_dialog.dart';
 
@@ -26,6 +28,10 @@ class MainController extends GetxController {
   final deviceService = Get.find<DeviceService>();
 
   final log = Get.find<Logger>();
+
+  final backendService = Get.find<DataService>();
+
+  final authService = Get.find<AuthService>();
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -79,6 +85,7 @@ class MainController extends GetxController {
 
   void setSleeping() {
     _rxIsSleeping(true);
+    backendService.sleepScoreUpdateStream(authService.user!);
   }
 
   void onNotificationPressed() {}

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
 import 'package:myapp/app/cores/models/pillowpon_metadata.dart';
 import 'package:myapp/app/cores/services/device_service.dart';
@@ -19,6 +20,12 @@ class DeviceServiceImpl extends DeviceService {
 
   final Rx<Pillowpon?> _rxConnectedDevice = Rx<Pillowpon?>(null);
 
+  final RxList<PillowponMetadata> _rxMetadataList = RxList<PillowponMetadata>.empty();
+
+  List<PillowponMetadata> get metadataList => _rxMetadataList.value;
+
+
+  Logger log = Get.find<Logger>();
 
   @override
   Pillowpon? get connected_device => _rxConnectedDevice.value;
@@ -40,9 +47,9 @@ class DeviceServiceImpl extends DeviceService {
   StreamSubscription<List<Pillowpon>> loadDeviceList() {
     return _source.loadDeviceList().listen((devices) {
       devices.sort((a, b) {
-        if(a.name.contains("unknown")) {
+        if (a.name.contains("unknown")) {
           return 1;
-        } else if(b.name.contains("unknown")) {
+        } else if (b.name.contains("unknown")) {
           return -1;
         }
         return a.name.compareTo(b.name);
@@ -54,7 +61,8 @@ class DeviceServiceImpl extends DeviceService {
   @override
   StreamSubscription<PillowponMetadata> metadataStream() {
     return _source.metadataStream().listen((metadata) {
-
+      _rxMetadataList.add(metadata);
+      log.i("Metadata received: ${metadata.toJson()}");
     });
   }
 }

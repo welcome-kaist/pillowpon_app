@@ -33,7 +33,7 @@ class DeviceDummy extends DeviceDataSource {
   @override
   Stream<PillowponMetadata> metadataStream() {
     return Stream.periodic(
-      const Duration(seconds: 1),
+      const Duration(seconds: 2),
       (count) => PillowponMetadata(
         pressure: Random().nextDouble() * 100 + 100,
         accelerator: Random().nextDouble() + 1,

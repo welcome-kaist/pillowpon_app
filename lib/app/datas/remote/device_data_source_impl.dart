@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 import 'package:myapp/app/cores/enums/connected_state.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
 import 'package:myapp/app/cores/models/pillowpon_metadata.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../source/device_data_source.dart';
 
@@ -91,7 +92,7 @@ class DeviceDataSourceImpl extends DeviceDataSource {
   @override
   Future<bool> connectDevice(String deviceId) async {
     bool isConnected = false;
-    for (var result in _scanResults) {
+    for (var result in FlutterBluePlus.lastScanResults) {
       if (result.device.remoteId.toString() == deviceId) {
         return connect(result.device).then((_) {
           initiateConnectState(result.device);
@@ -153,7 +154,7 @@ class DeviceDataSourceImpl extends DeviceDataSource {
   }
 
   Future<void> connect(BluetoothDevice device) async {
-    device.connect(autoConnect: true).then((_) {
+    device.connect().then((_) {
       log.i("Connected to ${device.name}");
       _connectedDevice = device;
       mtu(device);
@@ -163,13 +164,25 @@ class DeviceDataSourceImpl extends DeviceDataSource {
     });
   }
 
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/remoteId.txt');
+  }
+
   void saveDeviceId(String deviceId) async {
-    final file = File('/remoteId.txt');
+    final file = await _localFile;
     await file.writeAsString(deviceId);
   }
 
   void autoConnect() async {
-    final String remoteId = await File('/remoteId.txt').readAsString();
+    final file = await _localFile;
+    final String remoteId = await file.readAsString();
     var device = BluetoothDevice.fromId(remoteId);
 
     connect(device);
@@ -197,10 +210,11 @@ class DeviceDataSourceImpl extends DeviceDataSource {
   void read(BluetoothService service) async {
     var characteristics = service.characteristics;
     //TODO : do for all characteristics
-    var c = characteristics.first;
-    if (c.properties.read) {
-      List<int> value = await c.read();
-      print(value);
+    for (var c in characteristics) {
+      if (c.properties.read) {
+        List<int> value = await c.read();
+        log.i("characteristic : $value");
+      }
     }
   }
 
@@ -209,7 +223,6 @@ class DeviceDataSourceImpl extends DeviceDataSource {
       _rxConnectionState(state);
       if (state == BluetoothConnectionState.connected) {
         discoveryServices(device);
-        read(services.first);
       }
       if (state == BluetoothConnectionState.connected && _rssi == null) {
         _rxRssi(await device.readRssi());
@@ -223,5 +236,10 @@ class DeviceDataSourceImpl extends DeviceDataSource {
 
   void discoveryServices(BluetoothDevice device) async {
     _rxServices(await device.discoverServices());
+    log.i("Services discovered: ${_rxServices.length}");
+    for(var service in services) {
+      log.i("Service: ${service.uuid}");
+      read(service);
+    }
   }
 }

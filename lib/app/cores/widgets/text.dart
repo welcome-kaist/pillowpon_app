@@ -120,6 +120,19 @@ class PillowponText {
     );
   }
 
+  static Text comfortaa24Bold({
+    required String text,
+    Color? color,
+  }) {
+    return Text(
+      text,
+      style: GoogleFonts.comfortaa(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: color ?? AppColors.primaryBlack),
+    );
+  }
+
   static Text comfortaa36Normal({
     required String text,
     Color? color,

@@ -33,10 +33,9 @@ class MainView extends BaseView<MainController> {
     return Padding(
       padding: const EdgeInsets.all(30),
       child: Obx(() {
-        if(!controller.isSleeping) return onboarding();
+        if (!controller.isSleeping) return onboarding();
         return homeWidget();
-        }
-      ),
+      }),
     );
   }
 
@@ -97,7 +96,8 @@ class MainView extends BaseView<MainController> {
                   AppAsset.pillowIcon,
                   width: 122,
                   height: 122,
-                  color: controller.isConnected ? AppColors.primaryNormal : null,
+                  color:
+                      controller.isConnected ? AppColors.primaryNormal : null,
                 ),
                 Positioned(
                   bottom: 8,
@@ -190,18 +190,142 @@ class MainView extends BaseView<MainController> {
 
   @override
   Widget? endDrawer(BuildContext context) {
-    return Drawer(
+    return const Drawer(
       child: SettingWidget(),
     );
   }
 
-  Widget homeWidget(){
-    return LineChart(
-      LineChartData(
-        // read about it in the LineChartData section
-      ),
-      duration: Duration(milliseconds: 150), // Optional
-      curve: Curves.linear, // Optional
-    );
+  Widget homeWidget() {
+    return Obx(() {
+      return Column(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PillowponText.comfortaa24Bold(
+                text: "Sleep Score",
+                color: AppColors.primaryBlack,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 20),
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: Get.width * (3 / 4),
+                      child: LineChart(
+                        LineChartData(
+                          backgroundColor: AppColors.primaryWhite,
+                          maxY: 100,
+                          minY: 0,
+                          minX: controller
+                                  .backendService.sleepScoreList.isNotEmpty
+                              ? controller.backendService.sleepScoreList.first
+                                  .start_time.millisecondsSinceEpoch
+                                  .toDouble()
+                              : 0,
+                          titlesData: const FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                reservedSize: 44,
+                                showTitles: true,
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: false,
+                              ),
+                            ),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: false,
+                              ),
+                            ),
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: false,
+                              ),
+                            ),
+                          ),
+                          gridData: const FlGridData(
+                            show: true,
+                            drawVerticalLine: true,
+                            horizontalInterval: 10,
+                          ),
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border.all(
+                              color:
+                                  AppColors.primaryGray.withValues(alpha: 0.5),
+                              width: 1,
+                            ),
+                          ),
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: controller.backendService.sleepScoreList
+                                  .map((score) {
+                                return FlSpot(
+                                    score.start_time.millisecondsSinceEpoch
+                                        .toDouble(),
+                                    score.score.toDouble());
+                              }).toList(),
+                              isCurved: true,
+                              barWidth: 5,
+                              isStrokeCapRound: true,
+                              dotData: const FlDotData(show: false),
+                              gradient: const LinearGradient(
+                                  colors: AppColors.graphGradient),
+                              belowBarData: BarAreaData(
+                                show: true,
+                                gradient: LinearGradient(
+                                  colors: AppColors.graphGradient
+                                      .map((color) =>
+                                          color.withValues(alpha: 0.3))
+                                      .toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                          // read about it in the LineChartData section
+                        ),
+                        duration: const Duration(milliseconds: 150), // Optional
+                        curve: Curves.linear, // Optional
+                      ),
+                    ),
+                    Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Icon(
+                          controller.backendService.sleepScoreList.isNotEmpty &&
+                                  controller.backendService.sleepScoreList.last
+                                          .score >
+                                      50
+                              ? Icons.sentiment_satisfied_alt
+                              : Icons.sentiment_dissatisfied_outlined,
+                          size: 50,
+                          color: controller.backendService.sleepScoreList
+                                      .isNotEmpty &&
+                                  controller.backendService.sleepScoreList.last
+                                          .score >
+                                      50
+                              ? AppColors.primaryNormal.withAlpha(150)
+                              : AppColors.primaryRed.withAlpha(150),
+                        )),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          PillowponText.comfortaa20Normal(
+              text: controller.backendService.sleepScoreList.isNotEmpty &&
+                      controller.backendService.sleepScoreList.last.score > 50
+                  ? "You are sleeping well"
+                  : "You are not sleeping well",
+              color: controller.backendService.sleepScoreList.isNotEmpty &&
+                      controller.backendService.sleepScoreList.last.score > 50
+                  ? AppColors.primaryNormal
+                  : AppColors.primaryRed),
+        ],
+      );
+    });
   }
 }
