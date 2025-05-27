@@ -88,7 +88,7 @@ class SettingWidget extends GetWidget<SettingController> {
             style: TextStyle(color: AppColors.primaryRed),
           ),
           onTap: () {
-            Fluttertoast.showToast(msg: "개발중");
+            controller.authService.logout();
           },
         ),
         const SizedBox(

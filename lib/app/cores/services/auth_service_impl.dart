@@ -5,6 +5,7 @@ import 'package:myapp/app/cores/responses/auth_register_response.dart';
 import 'package:myapp/app/cores/services/auth_service.dart';
 
 import '../../datas/source/auth_data_source.dart';
+import '../../routes/app_pages.dart';
 
 class AuthServiceImpl extends AuthService {
   final _source = Get.find<AuthDataSource>(tag: (AuthDataSource).toString());
@@ -32,6 +33,7 @@ class AuthServiceImpl extends AuthService {
   @override
   Future<void> logout() {
     removeAuthToken();
+    Get.offAllNamed(Routes.LOGOUT);
     return _source.logout();
   }
 

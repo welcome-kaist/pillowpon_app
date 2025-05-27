@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
@@ -88,7 +89,12 @@ class MainController extends GetxController {
     backendService.sleepScoreUpdateStream(authService.user!);
   }
 
-  void onNotificationPressed() {}
+  void onNotificationPressed() {
+    Fluttertoast.showToast(msg: "개발중");
+  }
 
-  void onSettingPressed() {}
+  @override
+  void onClose() {
+    super.onClose();
+  }
 }

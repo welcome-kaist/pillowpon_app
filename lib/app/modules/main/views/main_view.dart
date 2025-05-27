@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jumping_dot/jumping_dot.dart';
 import 'package:myapp/app/cores/bases/base_view.dart';
@@ -53,7 +54,9 @@ class MainView extends BaseView<MainController> {
         ],
         type: BottomNavigationBarType.fixed,
         currentIndex: controller.currentIndex,
-        onTap: (index) {},
+        onTap: (index) {
+          Fluttertoast.showToast(msg: "개발중");
+        },
       );
     });
   }
