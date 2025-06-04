@@ -364,6 +364,8 @@ class MainView extends BaseView<MainController> {
                 onPressed: () {
                   if (controller.isSleeping) {
                     controller.stopSleeping();
+                  } else {
+                    controller.setSleeping();
                   }
                 },
                 style: OutlinedButton.styleFrom(
@@ -371,14 +373,14 @@ class MainView extends BaseView<MainController> {
                         width: 2,
                         color: controller.isSleeping
                             ? AppColors.primaryRed
-                            : AppColors.primaryGray.withValues(alpha: 0.5)),
+                            : AppColors.primaryNormal.withValues(alpha: 0.5)),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10))),
                 child: PillowponText.mob14Bold(
-                  text: "Stop",
+                  text: controller.isSleeping ? "Stop" : "Start",
                   color: controller.isSleeping
                       ? AppColors.primaryRed
-                      : AppColors.primaryGray.withValues(alpha: 0.5),
+                      : AppColors.primaryNormal,
                 )),
           ],
         ),

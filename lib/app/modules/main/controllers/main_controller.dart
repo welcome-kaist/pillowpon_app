@@ -126,6 +126,9 @@ class MainController extends GetxController {
       _rxIsSleeping(false);
       _loadAndUploadMetadataSubscription!.pause();
       _sleepDepthUpdateSubscription!.pause();
+      backendService.getMonthlySleepScores().then((data) {
+        _rxMonthlySleepScores(data);
+      });
       Get.snackbar(
         "Your sleep score is ${result.score}",
         "start time : ${result.start_time}\n end time : ${result.end_time}",
