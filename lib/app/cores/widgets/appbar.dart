@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:myapp/app/modules/main/widgets/setting.dart';
 import 'package:myapp/app/routes/app_asset_path.dart';
+
+import '../values/app_colors.dart';
 
 class MyAppbar {
   static PreferredSizeWidget main({
@@ -16,6 +19,8 @@ class MyAppbar {
       ),
       centerTitle: false,
       automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0,
+      elevation: 0,
       actions: [
         IconButton(
           icon: const Icon(Icons.notifications),

@@ -33,6 +33,24 @@ class RegisterValidator {
     };
   }
 
+  FormFieldValidator ageValidator() {
+    return (value) {
+      if (value!.isEmpty || int.tryParse(value) == null) {
+        return 'invalid age';
+      }
+      return null;
+    };
+  }
+
+  FormFieldValidator genderValidator() {
+    return (value) {
+      if (value!.isEmpty || (value != "male" && value != "female")) {
+        return 'invalid gender';
+      }
+      return null;
+    };
+  }
+
   bool tryValidation(GlobalKey<FormState> formKey) {
     final isValid = formKey.currentState!.validate();
     if (isValid) {

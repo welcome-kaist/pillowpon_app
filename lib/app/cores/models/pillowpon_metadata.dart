@@ -34,14 +34,14 @@ class PillowponMetadata{
 
   Map<String, dynamic> toJson() {
     return {
-      'pressure': pressure,
-      'accelerator': accelerator,
-      'humidity': humidity,
-      'temperature': temperature,
-      'body_detection': body_detection,
-      'photoresistor': photoresistor,
-      'sound': sound,
-      'time': time,
+      'pressure': pressure.toString(),
+      'accelerator': accelerator.toString(),
+      'humidity': humidity.toString(),
+      'temperature': temperature.toString(),
+      'body_detection': body_detection.toString(),
+      'photoresistor': photoresistor.toString(),
+      'sound': sound.toString(),
+      'time': time.toString(),
     };
   }
 }

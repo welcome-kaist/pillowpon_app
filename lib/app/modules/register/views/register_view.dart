@@ -24,41 +24,43 @@ class RegisterView extends BaseView<RegisterController> {
 
   @override
   Widget body(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 30,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              PillowponText.comfortaa24Normal(
-                text: "Welcome to",
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3, left: 5),
-                child: Image.asset(
-                  AppAsset.logo,
-                  width: 130,
-                  height: 37,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 30,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                PillowponText.comfortaa24Normal(
+                  text: "Welcome to",
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          PillowponText.comfortaa20Normal(
-              text: "Please sign up to use", color: AppColors.primaryBlack),
-          loginForm(),
-          const SizedBox(
-            height: 8.0,
-          ),
-          confirmButton(),
-        ],
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 3, left: 5),
+                  child: Image.asset(
+                    AppAsset.logo,
+                    width: 130,
+                    height: 37,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            PillowponText.comfortaa20Normal(
+                text: "Please sign up to use", color: AppColors.primaryBlack),
+            registerForm(),
+            const SizedBox(
+              height: 8.0,
+            ),
+            confirmButton(),
+          ],
+        ),
       ),
     );
   }
@@ -68,7 +70,7 @@ class RegisterView extends BaseView<RegisterController> {
     return null;
   }
 
-  Widget loginForm() {
+  Widget registerForm() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
       child: Form(
@@ -170,7 +172,73 @@ class RegisterView extends BaseView<RegisterController> {
                   hintStyle:
                       TextStyle(fontSize: 14, color: AppColors.primaryNormal),
                   contentPadding: EdgeInsets.all(10)),
-            )
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            TextFormField(
+              key: const ValueKey(3),
+              keyboardType: TextInputType.number,
+              validator: controller.validator.ageValidator(),
+              onSaved: (value) {
+                controller.userAge = int.tryParse(value!) ?? 0;
+              },
+              onChanged: (value) => controller.userAge = int.tryParse(value) ?? 0,
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.today,
+                    color: AppColors.primaryNormal,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryNormal),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryNormal),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  hintText: 'age',
+                  hintStyle:
+                  TextStyle(fontSize: 14, color: AppColors.primaryNormal),
+                  contentPadding: EdgeInsets.all(10)),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            TextFormField(
+              key: const ValueKey(4),
+              keyboardType: TextInputType.text,
+              validator: controller.validator.genderValidator(),
+              onSaved: (value) {
+                controller.userGender = value!;
+              },
+              onChanged: (value) => controller.userGender = value,
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.man,
+                    color: AppColors.primaryNormal,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryNormal),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryNormal),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  hintText: 'gender (male or Female)',
+                  hintStyle:
+                  TextStyle(fontSize: 14, color: AppColors.primaryNormal),
+                  contentPadding: EdgeInsets.all(10)),
+            ),
           ],
         ),
       ),

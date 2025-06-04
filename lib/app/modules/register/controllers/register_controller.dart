@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import '../../../cores/services/auth_service.dart';
 import '../../../cores/utils/error_snackbar.dart';
 import '../../../routes/app_pages.dart';
@@ -20,6 +23,14 @@ class RegisterController extends GetxController {
 
   String get userPassword => _rxUserPassword.value;
 
+  final RxInt _rxUserAge = RxInt(0);
+
+  int get userAge => _rxUserAge.value;
+
+  final RxString _rxUserGender = RxString("");
+
+  String get userGender => _rxUserGender.value;
+
   final RxBool _rxIsRegisterValid = RxBool(true);
 
   bool get isRegisterValid => _rxIsRegisterValid.value;
@@ -29,6 +40,8 @@ class RegisterController extends GetxController {
   bool get isLoading => _rxIsLoading.value;
 
   AuthService get authService => Get.find<AuthService>();
+
+  Logger get log => Get.find<Logger>();
 
   set userName(String value) {
     _rxUserName.value = value;
@@ -42,6 +55,14 @@ class RegisterController extends GetxController {
     _rxUserPassword.value = value;
   }
 
+  set userAge(int value) {
+    _rxUserAge.value = value;
+  }
+
+  set userGender(String value) {
+    _rxUserGender.value = value;
+  }
+
   VoidCallback register(GlobalKey<FormState> formKey) {
     return () async {
       _rxIsLoading(true);
@@ -52,7 +73,12 @@ class RegisterController extends GetxController {
       }
       try {
         final token = await authService.register(
-            name: userName, email: userEmail, password: userPassword);
+          name: userName,
+          email: userEmail,
+          password: userPassword,
+          age: userAge,
+          gender: userGender,
+        );
         final newUser = authService.user;
         if (newUser != null) {
           _rxIsLoading(false);
@@ -60,7 +86,7 @@ class RegisterController extends GetxController {
         }
       } catch (e) {
         _rxIsLoading(false);
-        ErrorSnackbar.show(e.toString());
+        log.e('Register failed: $e');
       }
     };
   }

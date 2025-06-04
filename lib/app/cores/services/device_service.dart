@@ -7,11 +7,13 @@ import 'package:myapp/app/cores/models/pillowpon_metadata.dart';
 abstract class DeviceService extends GetxService {
   List<Pillowpon> get deviceList;
 
-  Pillowpon? get connected_device;
+  Pillowpon? get connectedDevice;
 
   StreamSubscription<List<Pillowpon>> loadDeviceList();
 
   Future<bool> connectDevice(Pillowpon target);
 
-  StreamSubscription<PillowponMetadata> metadataStream();
+  StreamSubscription<PillowponMetadata?> loadAndUploadMetadata();
+
+  Future<void> activateAlarm(int type);
 }

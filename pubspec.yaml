@@ -39,7 +39,6 @@ dependencies:
   flutter_svg: ^2.1.0
   google_fonts: ^6.2.1
   jumping_dot: ^0.0.7
-  flutter_blue_plus: ^1.35.5
   logger: ^2.5.0
   flutter_animated_button: ^2.0.4
   fluttertoast: ^8.2.12
@@ -47,6 +46,10 @@ dependencies:
   path_provider: ^2.1.5
   permission_handler: ^12.0.0+1
   bluetooth_classic: ^0.0.3
+  http: ^1.4.0
+  table_calendar: ^3.2.0
+  flutter_secure_storage: ^9.2.4
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

@@ -26,9 +26,15 @@ class AuthDummy implements AuthDataSource {
 
   @override
   Future<AuthRegisterResponse> register(
-      {required String name, required String email, required String password}) {
+      {required String name,
+      required String email,
+      required String password,
+      required int age,
+      required String gender}) {
     return Future(() => AuthRegisterResponse(
-        user: User(id: "1", name: name, email: email, age: 20, gender: "male"),
-        token: "dummy_token"));
+          user:
+              User(id: "1", name: name, email: email, age: 20, gender: "male"),
+          token: "dummy_token",
+        ));
   }
 }

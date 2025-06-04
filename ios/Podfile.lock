@@ -1,8 +1,7 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_blue_plus_darwin (0.0.2):
+  - flutter_secure_storage (6.0.0):
     - Flutter
-    - FlutterMacOS
   - fluttertoast (0.0.2):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -13,7 +12,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - flutter_blue_plus_darwin (from `.symlinks/plugins/flutter_blue_plus_darwin/darwin`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -21,8 +20,8 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  flutter_blue_plus_darwin:
-    :path: ".symlinks/plugins/flutter_blue_plus_darwin/darwin"
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   path_provider_foundation:
@@ -32,7 +31,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_blue_plus_darwin: 904ed52825285a15f60e9d90312337a09f11a785
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
   fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2

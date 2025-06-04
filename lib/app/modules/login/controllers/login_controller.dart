@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:myapp/app/modules/login/models/login_validator.dart';
 
 import '../../../cores/services/auth_service.dart';
@@ -31,6 +32,8 @@ class LoginController extends GetxController{
 
   AuthService get authService => Get.find<AuthService>();
 
+  Logger get log => Get.find<Logger>();
+
   set userName(String value) {
     _rxUserName.value = value;
   }
@@ -61,7 +64,7 @@ class LoginController extends GetxController{
           Get.offAndToNamed(Routes.MAIN);
         }
       } catch (e) {
-        ErrorSnackbar.show(e.toString());
+        log.e('login failed: $e');
         _rxIsLoading(false);
       }
     };

@@ -36,16 +36,27 @@ class DeviceDummy extends DeviceDataSource {
       const Duration(seconds: 2),
       (count) => PillowponMetadata(
         pressure: Random().nextDouble() * 100 + 100,
-        accelerator: Random().nextDouble() + 1,
+        accelerator: Random().nextDouble() * 8 - 4,
         humidity: Random().nextDouble() * 10 + 50,
         temperature: Random().nextDouble() * 5 + 25,
         body_detection: Random().nextDouble() > 0.5 ? 1 : 0,
-        photoresistor: Random().nextDouble() * 100 + 300,
+        photoresistor: Random().nextDouble() * 1023,
         sound: Random().nextDouble() * 10 + 20,
         time: count * 1000,
       ),
     ).takeWhile(
       (metadata) => metadata.time < 60000,
     );
+  }
+
+  @override
+  Future<void> disconnectDevice() {
+    return Future.value();
+  }
+
+  @override
+  Future<void> activateAlarm(int type) {
+    // TODO: implement activateAlarm
+    throw UnimplementedError();
   }
 }

@@ -24,13 +24,22 @@ class SupabaseAuthService extends AuthService {
     // TODO: implement logout
   }
 
+  void storeAuthToken() {}
+
+  void removeAuthToken() {}
+
   @override
   Future<String?> register(
-      {required String name, required String email, required String password}) {
+      {required String name,
+      required String email,
+      required String password,
+      required int age,
+      required String gender}) {
     // TODO: implement register
     throw UnimplementedError();
   }
 
-  void storeAuthToken() {}
-  void removeAuthToken() {}
+  @override
+  // TODO: implement accessToken
+  String get accessToken => throw UnimplementedError();
 }

@@ -9,6 +9,8 @@ class AppColors {
   static const primaryDark = Color(0xFF281D91);
   static const Color contentColorCyan = Color(0xFF50E4FF);
   static const Color contentColorBlue = Color(0xFF2196F3);
+  static const Color primaryTransparent = Color.fromARGB(0, 0, 0, 0);
+  static const Color primaryGreen = Color(0xFF28a745);
   static const List<Color> graphGradient = [
     contentColorCyan,
     contentColorBlue

@@ -9,5 +9,9 @@ abstract class DeviceDataSource {
 
   Future<bool> connectDevice(String deviceId);
 
-  Stream<PillowponMetadata> metadataStream();
+  Stream<PillowponMetadata?> metadataStream();
+
+  Future<void> disconnectDevice();
+
+  Future<void> activateAlarm(int type);
 }

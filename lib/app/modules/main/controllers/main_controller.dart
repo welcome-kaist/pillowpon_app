@@ -1,14 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
 import 'package:myapp/app/cores/services/data_service.dart';
 import 'package:myapp/app/cores/utils/error_dialog.dart';
-import 'package:myapp/app/modules/main/widgets/setting.dart';
+import 'package:myapp/app/modules/main/models/smart_alart.dart';
 
+import '../../../cores/models/sleep_score.dart';
 import '../../../cores/services/auth_service.dart';
 import '../../../cores/services/device_service.dart';
 import '../widgets/device_dialog.dart';
@@ -37,27 +40,46 @@ class MainController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   final RxBool _rxIsSleeping = RxBool(false);
+
   bool get isSleeping => _rxIsSleeping.value;
+
+  final RxBool _rxIsOnboarding = RxBool(true);
+
+  bool get isOnboarding => _rxIsOnboarding.value;
+
+  final RxMap<int, SleepScore> _rxMonthlySleepScores = RxMap<int, SleepScore>();
+
+  Map<int, SleepScore> get monthlySleepScores => _rxMonthlySleepScores.value;
+
+  StreamSubscription? _loadDeviceListSubscription;
+  StreamSubscription? _loadAndUploadMetadataSubscription;
+  StreamSubscription? _sleepDepthUpdateSubscription;
+
+  final Rx<SmartAlarm?> _rxSmartAlarm = Rx<SmartAlarm?>(null);
+
+  SmartAlarm? get smartAlarm => _rxSmartAlarm.value;
+
+  final RxList<SmartAlarm> _rxSmartAlarmList = RxList<SmartAlarm>.empty();
+
+  List<SmartAlarm> get smartAlarmList => _rxSmartAlarmList;
 
   @override
   void onInit() {
     super.onInit();
   }
 
-  void tabBarIndex(int index) {
+  set tabBarIndex(int index) {
     _rxCurrentIndex.value = index;
   }
 
   Future<void> openDeviceDialog() async {
     _rxIsDeviceDialogOpened.value = true;
-    deviceService.loadDeviceList();
+    _loadDeviceListSubscription ??= deviceService.loadDeviceList();
+    _loadDeviceListSubscription!.resume();
     Get.dialog(DeviceDialog()).then((_) {
       _rxIsDeviceDialogOpened.value = false;
+      _loadDeviceListSubscription!.pause();
     });
-  }
-
-  void closeDeviceDialog() {
-    _rxIsDeviceDialogOpened.value = false;
   }
 
   void connectDevice(Pillowpon device) async {
@@ -85,8 +107,32 @@ class MainController extends GetxController {
   }
 
   void setSleeping() {
-    _rxIsSleeping(true);
-    backendService.sleepScoreUpdateStream(authService.user!);
+    backendService.getMonthlySleepScores().then((data) {
+      _rxMonthlySleepScores(data);
+    });
+    backendService.newSleepSession().then((_) {
+      _rxIsOnboarding(false);
+      _rxIsSleeping(true);
+      _loadAndUploadMetadataSubscription ??=
+          deviceService.loadAndUploadMetadata();
+      _loadAndUploadMetadataSubscription!.resume();
+      _sleepDepthUpdateSubscription ??= backendService.sleepDepthUpdateStream();
+      _sleepDepthUpdateSubscription!.resume();
+    });
+  }
+
+  void stopSleeping() async {
+    backendService.stopSleepSession().then((result) {
+      _rxIsSleeping(false);
+      _loadAndUploadMetadataSubscription!.pause();
+      _sleepDepthUpdateSubscription!.pause();
+      Get.snackbar(
+        "Your sleep score is ${result.score}",
+        "start time : ${result.start_time}\n end time : ${result.end_time}",
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+      );
+    });
   }
 
   void onNotificationPressed() {
@@ -95,6 +141,44 @@ class MainController extends GetxController {
 
   @override
   void onClose() {
+    if (_loadDeviceListSubscription != null) {
+      _loadDeviceListSubscription!.cancel();
+    }
+    if (_loadAndUploadMetadataSubscription != null) {
+      _loadAndUploadMetadataSubscription!.cancel();
+    }
+    if (_sleepDepthUpdateSubscription != null) {
+      _sleepDepthUpdateSubscription!.cancel();
+    }
     super.onClose();
+  }
+
+  void setSmartAlarm(SmartAlarm smartAlarm) {
+    _rxSmartAlarm(smartAlarm);
+  }
+
+  void saveSmartAlarm() {
+    if (smartAlarm == null) {
+      return;
+    }
+    if ((smartAlarm!.alartTime
+        .subtract(const Duration(minutes: 30))
+        .isAfter(DateTime.now()))) {
+      smartAlarm!.setSmartAlart(() {
+        if (backendService.sleepDepthList.last.depth < 30) {
+          deviceService.activateAlarm(0);
+        } else {
+          smartAlarm!.stopAlart();
+          smartAlarm!.setSmartAlart(() {
+            deviceService.activateAlarm(0);
+          }, Duration.zero);
+        }
+      }, const Duration(minutes: 30));
+    } else {
+      smartAlarm!.setSmartAlart(() {
+        deviceService.activateAlarm(0);
+      }, Duration.zero);
+    }
+    _rxSmartAlarmList.add(smartAlarm!);
   }
 }

@@ -29,6 +29,19 @@ class PillowponText {
     );
   }
 
+  static Text mob14Normal({
+    required String text,
+    Color? color,
+  }) {
+    return Text(
+      text,
+      style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          color: color ?? AppColors.primaryBlack),
+    );
+  }
+
   static Text mob14Bold({
     required String text,
     Color? color,

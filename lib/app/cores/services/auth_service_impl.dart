@@ -12,6 +12,11 @@ class AuthServiceImpl extends AuthService {
 
   final Rx<User?> _rxUser = Rx(null);
 
+  final RxString _rxAccessToken = RxString('');
+
+  @override
+  String get accessToken => _rxAccessToken.value;
+
   @override
   User? get user => _rxUser.value;
 
@@ -23,10 +28,13 @@ class AuthServiceImpl extends AuthService {
   @override
   Future<String?> login(
       {required String email, required String password}) async {
-    AuthLoginResponse response =
+    AuthLoginResponse? response =
         await _source.login(email: email, password: password);
+    if (response == null) {
+      return null;
+    }
     _rxUser(response.user);
-    storeAuthToken();
+    storeAuthToken(response.token);
     return response.token;
   }
 
@@ -41,15 +49,27 @@ class AuthServiceImpl extends AuthService {
   Future<String?> register(
       {required String name,
       required String email,
-      required String password}) async {
-    AuthRegisterResponse response =
-        await _source.register(name: name, email: email, password: password);
+      required String password,
+      required int age,
+      required String gender}) async {
+    AuthRegisterResponse? response = await _source.register(
+      name: name,
+      email: email,
+      password: password,
+      age: age,
+      gender: gender,
+    );
+    if (response == null) {
+      return null;
+    }
     _rxUser(response.user);
-    storeAuthToken();
+    storeAuthToken(response.token);
     return response.token;
   }
 
-  void storeAuthToken() {}
+  void storeAuthToken(String token) {
+    _rxAccessToken(token);
+  }
 
   void removeAuthToken() {}
 }

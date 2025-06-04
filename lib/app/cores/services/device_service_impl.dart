@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:myapp/app/cores/models/pillowpon.dart';
 import 'package:myapp/app/cores/models/pillowpon_metadata.dart';
+import 'package:myapp/app/cores/services/data_service.dart';
 import 'package:myapp/app/cores/services/device_service.dart';
 import 'package:myapp/app/datas/source/device_data_source.dart';
 
@@ -16,28 +16,31 @@ class DeviceServiceImpl extends DeviceService {
 
   final Rx<List<Pillowpon>> _rxDeviceList = Rx<List<Pillowpon>>([]);
 
+  @override
   List<Pillowpon> get deviceList => _rxDeviceList.value;
 
   final Rx<Pillowpon?> _rxConnectedDevice = Rx<Pillowpon?>(null);
 
-  final RxList<PillowponMetadata> _rxMetadataList = RxList<PillowponMetadata>.empty();
+  final RxList<PillowponMetadata> _rxMetadataList =
+      RxList<PillowponMetadata>.empty();
 
   List<PillowponMetadata> get metadataList => _rxMetadataList.value;
 
-
   Logger log = Get.find<Logger>();
 
+  DataService get backendService => Get.find<DataService>();
+
   @override
-  Pillowpon? get connected_device => _rxConnectedDevice.value;
+  Pillowpon? get connectedDevice => _rxConnectedDevice.value;
 
   @override
   Future<bool> connectDevice(Pillowpon target) {
     return _source.connectDevice(target.id).then((_) {
       _rxConnectedDevice(target);
       if (_) {
-        connected_device!.connectedState = ConnectedState.SUCCESS;
+        connectedDevice!.connectedState = ConnectedState.SUCCESS;
       } else {
-        connected_device!.connectedState = ConnectedState.FAILURE;
+        connectedDevice!.connectedState = ConnectedState.FAILURE;
       }
       return _;
     });
@@ -59,10 +62,29 @@ class DeviceServiceImpl extends DeviceService {
   }
 
   @override
-  StreamSubscription<PillowponMetadata> metadataStream() {
+  StreamSubscription<PillowponMetadata?> loadAndUploadMetadata() {
     return _source.metadataStream().listen((metadata) {
+      if (metadata == null) {
+        log.w("Received null metadata, skipping.");
+        return;
+      }
+      backendService.uploadMetadata(metadata);
       _rxMetadataList.add(metadata);
       log.i("Metadata received: ${metadata.toJson()}");
+    });
+  }
+
+  @override
+  void onClose() {
+    _source.disconnectDevice();
+  }
+
+  @override
+  Future<void> activateAlarm(int type) {
+    return _source.activateAlarm(type).then((_) {
+      log.i("Alarm activated with type: $type");
+    }).catchError((error) {
+      log.e("Failed to activate alarm: $error");
     });
   }
 }
