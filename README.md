@@ -1,2 +1,2 @@
-# myapp_template
-myapp_template
+# Pillowpon mobile app
+KAIST Project
